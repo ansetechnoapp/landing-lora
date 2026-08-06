@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPageBySlug } from "@/lib/api";
+import { LeadForm } from "@/app/components/LeadForm";
 
 export default async function LandingPageDetail({
   params,
@@ -104,6 +105,8 @@ export default async function LandingPageDetail({
               Contenu en cours de création...
             </p>
           )}
+
+          <LeadForm slug={slug} />
         </div>
       </main>
 

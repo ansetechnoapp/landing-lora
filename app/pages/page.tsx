@@ -12,7 +12,9 @@ export default async function PagesListPage() {
       getSectors(),
     ]);
     if (pagesRes.status === "fulfilled") pages = pagesRes.value.data || [];
+    else error = pagesRes.reason instanceof Error ? pagesRes.reason.message : "Catalogue indisponible";
     if (sectorsRes.status === "fulfilled") sectors = sectorsRes.value.data || [];
+    else if (!error) error = sectorsRes.reason instanceof Error ? sectorsRes.reason.message : "Secteurs indisponibles";
   } catch (e) {
     error = e instanceof Error ? e.message : "Erreur inconnue";
   }

@@ -1,7 +1,24 @@
-const API_URL = process.env.ZODBACK_API_URL || "https://api.zoddev.site";
-const API_TOKEN = process.env.ZODBACK_API_TOKEN || "";
+const DEFAULT_API_URL = "https://integrations-api.zodev.live";
+const LEGACY_API_HOSTS = new Set(["api.zoddev.site", "api.zodev.live"]);
+const API_URL = normalizeApiBaseUrl(process.env.ZODBACK_API_URL || DEFAULT_API_URL);
+const API_TOKEN = process.env.ZODBACK_API_TOKEN?.trim() || "";
+
+function normalizeApiBaseUrl(value: string): string {
+  try {
+    const url = new URL(value.trim());
+    if (LEGACY_API_HOSTS.has(url.hostname)) {
+      throw new Error(`Legacy ZodBack API host is not allowed: ${url.hostname}`);
+    }
+    return url.origin;
+  } catch {
+    throw new Error("ZODBACK_API_URL must be an absolute URL on the canonical API host");
+  }
+}
 
 async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
+  if (!API_TOKEN) throw new Error("Landing indisponible : ZODBACK_API_TOKEN manquant");
+
+  const method = options?.method || "GET";
   const res = await fetch(`${API_URL}/api/landing-pages/v1/public/${path}`, {
     ...options,
     headers: {
@@ -10,7 +27,7 @@ async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
       "Content-Type": "application/json",
       ...options?.headers,
     },
-    next: { revalidate: 60 },
+    ...(method === "GET" ? { next: { revalidate: 60 } } : { cache: "no-store" }),
   });
 
   if (!res.ok) {

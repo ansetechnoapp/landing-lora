@@ -12,7 +12,9 @@ export default async function HomePage() {
       getCompanyProfile(),
     ]);
     if (pagesRes.status === "fulfilled") pages = pagesRes.value.data || [];
+    else error = pagesRes.reason instanceof Error ? pagesRes.reason.message : "Catalogue indisponible";
     if (companyRes.status === "fulfilled") company = companyRes.value.data;
+    else if (!error) error = companyRes.reason instanceof Error ? companyRes.reason.message : "Profil indisponible";
   } catch (e) {
     error = e instanceof Error ? e.message : "Erreur inconnue";
   }
