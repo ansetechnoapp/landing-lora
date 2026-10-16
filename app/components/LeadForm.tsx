@@ -8,21 +8,27 @@ export function LeadForm({ slug }: { slug: string }) {
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus('sending');
-    const form = new FormData(event.currentTarget);
-    const response = await fetch(`/api/leads/${encodeURIComponent(slug)}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        formData: {
-          name: form.get('name'),
-          email: form.get('email'),
-          message: form.get('message'),
-        },
-        source: 'website',
-      }),
-    });
-    setStatus(response.ok ? 'success' : 'error');
-    if (response.ok) event.currentTarget.reset();
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
+
+    try {
+      const response = await fetch(`/api/leads/${encodeURIComponent(slug)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          formData: {
+            name: form.get('name'),
+            email: form.get('email'),
+            message: form.get('message'),
+          },
+          source: 'website',
+        }),
+      });
+      setStatus(response.ok ? 'success' : 'error');
+      if (response.ok) formElement.reset();
+    } catch {
+      setStatus('error');
+    }
   }
 
   return (

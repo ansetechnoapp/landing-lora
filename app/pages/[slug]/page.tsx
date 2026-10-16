@@ -112,7 +112,7 @@ export default async function LandingPageDetail({
 
       <footer className="border-t border-gray-200 py-6 text-center text-sm text-gray-400">
         Propulsé par{" "}
-        <a href="https://zoddev.site" className="text-violet-500 hover:underline">ZodBack</a>
+        <a href="https://zodev.live" className="text-violet-500 hover:underline">ZodBack</a>
       </footer>
     </div>
   );
